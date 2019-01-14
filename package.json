@@ -1,0 +1,29 @@
+{
+  "name": "allthenewsthatsfit2scrape",
+  "version": "1.0.0",
+  "description": "NodeJS MongoDB Scraping App",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/seiji13r/2018bootcamp14AllTheNewsThatsFit2Scrape.git"
+  },
+  "keywords": [
+    "Scraping"
+  ],
+  "author": "Seiji Osada",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/seiji13r/2018bootcamp14AllTheNewsThatsFit2Scrape/issues"
+  },
+  "homepage": "https://github.com/seiji13r/2018bootcamp14AllTheNewsThatsFit2Scrape#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "cheerio": "^1.0.0-rc.2",
+    "express": "^4.16.4",
+    "express-handlebars": "^3.0.0",
+    "mongoose": "^5.4.4"
+  }
+}
