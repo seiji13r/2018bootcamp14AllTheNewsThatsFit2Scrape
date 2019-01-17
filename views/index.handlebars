@@ -1,0 +1,18 @@
+
+<div class="jumbotron">
+  <h1>HERE we are in the Index!</h1>
+</div>
+
+<div class="container-fluid">
+  <div class="row">
+    <row class="col-12" id="articleList">
+      <ul>
+        {{#each articles}}
+        <li class="articleDiv" id="{{this.id}}">
+          {{this.title}}
+        </li>
+        {{/each}}
+      </ul>
+    </row>
+  </div>
+</div>
