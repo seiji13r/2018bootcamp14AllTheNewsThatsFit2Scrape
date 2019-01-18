@@ -6,7 +6,7 @@ const cheerio = require("cheerio");
 
 module.exports = (app, db) => {
   
-  app.get("/scrape", (req, res) => {
+  app.get("/api/scrape", (req, res) => {
     // First, we grab the body of the html with axios
     axios.get("http://www.echojs.com/")
       .then(response => {
@@ -27,18 +27,29 @@ module.exports = (app, db) => {
             .children("a")
             .attr("href");
     
-          // Create a new Article using the `result` object built from scraping
-          db.Article.create(result)
-            .then(function(dbArticle) {
-              // View the added result in the console
-              // eslint-disable-next-line no-console
-              console.log(dbArticle);
+          // Custom Implementation of Find or Create
+          // This will prevent to duplicate Articles
+          db.Article.findOne({title:result.title})
+            .then(article => {
+              // console.log(article);
+              if(!article){
+                // console.log(result.title, "Not Found");
+                // Create a new Article using the `result` object built from scraping
+                db.Article.create(result)
+                  .then(dbArticle => {
+                    // View the added result in the console
+                    // eslint-disable-next-line no-console
+                    // console.log(dbArticle);
+                    dbArticle;
+                  })
+                  .catch(function(err) {
+                    // If an error occurred, log it
+                    // eslint-disable-next-line no-console
+                    console.log(err);
+                  });
+              }
             })
-            .catch(function(err) {
-              // If an error occurred, log it
-              // eslint-disable-next-line no-console
-              console.log(err);
-            });
+            .catch(error => res.json({"error": error}));
         });
     
         // Send a message to the client
@@ -50,10 +61,10 @@ module.exports = (app, db) => {
       });
   });
   
-  // Route for getting all Articles from the db
+  // Route for getting all Scraped Articles from the db
   app.get("/articles", function(req, res) {
     // Grab every document in the Articles collection
-    db.Article.find({})
+    db.Article.find({saved:false})
       .then(function(dbArticle) {
         // If we were able to successfully find Articles, send them back to the client
         res.json(dbArticle);
@@ -98,6 +109,60 @@ module.exports = (app, db) => {
         // If an error occurred, send it to the client
         res.json(err);
       });
+  });
+
+  // *************************************************************************
+  
+  // Route to Get All Articles
+  app.get("/api/articles/:option", function(req, res) {
+    const urlOption = req.params.option;
+    const queryOptions = ["all", "scraped", "saved"];
+    const removeOptions = ["remove-scraped", "remove-all"];
+    let query;
+
+    switch(urlOption){
+    case "all":
+      query = {};
+      break;
+    case "scraped":
+      query = {saved:false};
+      break;
+    case "saved":
+      query = {saved:true};
+      break;
+    case "remove-scraped":
+      query = {saved:false};;
+      break;
+    case "remove-all":
+      query = {};
+      break;
+    }
+
+    if (queryOptions.includes(urlOption)) {
+      db.Article.find(query)
+        .then(dbArticle => res.json(dbArticle))
+        .catch(err =>res.json(err));
+    } 
+    else if (removeOptions.includes(urlOption)) {
+      db.Article.remove(query)
+        .then(result => res.json(result))
+        .catch(err =>res.json(err));
+    }
+
+  });
+
+  // Route for saving Scraped Article to Saved Articles
+  app.post("/api/save_article/:id", function(req, res) {
+    db.Article.findByIdAndUpdate(req.params.id, {saved:true})
+      .then(dbArticle => res.json(dbArticle))
+      .catch(err => res.json(err));
+  });
+
+  // Route to Delete Article
+  app.post("/api/delete_article/:id", function(req, res) {
+    db.Article.findByIdAndRemove(req.params.id)
+      .then(dbArticle => res.json(dbArticle))
+      .catch(err => res.json(err));
   });
 
 };

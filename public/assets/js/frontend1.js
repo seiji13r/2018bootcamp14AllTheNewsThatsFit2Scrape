@@ -1,3 +1,18 @@
+const homeUrl = "/scraped-articles";
+const defaultTimeOut = 2000;
+const getDOMArticle = (e) => {
+  const articleContainer = e.target.parentElement.parentElement;
+  const articleLink = articleContainer.children[0];
+  const id = articleContainer.id;
+  const title = articleLink.innerText;
+  const link = articleLink.href;
+
+  return {
+    id,
+    title,
+    link
+  };
+};
 
 const drawAndShowModal = (title, message) => {
   // Draw the response Message in the Modal
@@ -19,16 +34,16 @@ const scrapButtonHandler = (e) => {
   // Execute Scraping Routine via Ajax
   $.ajax(
     {
-      url: "/scrape",
+      url: "/api/scrape",
       method: "GET"
     }
   )
     .then(response => {
       const message = response.msg ? response.msg : response.error;
       const title = response.msg ? "Scraping Succeded" : "An Error Occurred in the API endpoint";
-      const myTimeOut = response.msg ? 3000 : 5000;
+      const myTimeOut = response.msg ? 2000 : 5000;
       drawAndShowModal(title, message);
-      setTimeout(() => location.reload(), myTimeOut);
+      setTimeout(() => window.location.replace(homeUrl), myTimeOut);
     })
     .catch(error => {
       // console.log(error);
@@ -49,16 +64,65 @@ document.getElementById("mainNavbar").addEventListener("click", e => {
 // displayArticle Handler
 const displayArticle = (e) => {
   e.preventDefault();
-}
+};
+
+// saveArticle Handler
+const saveArticle = (e) => {
+  e.preventDefault();
+
+  const {id, title, link} = getDOMArticle(e);
+  // console.log(getDOMArticle(e));
+  
+  // Ajax call to the API - Save Article to Saved Articles Collection
+  $.ajax(
+    {
+      url: `/api/save_article/${id}`,
+      method: "POST",
+      data: {id:id}
+    }
+  )
+    .then(response => {
+      // console.log(response);
+      drawAndShowModal("Article Saved", title);
+      setTimeout(() => location.reload(), defaultTimeOut);
+    })
+    .catch(error => {
+      // console.log(error);
+      drawAndShowModal("An Error Happen", "Status Code: " + JSON.stringify(error.status));
+    });  
+
+};
 
 // deleteArticle Handler
-const deleteArticle = (e) => {
+const deleteArticleFromSaved = (e) => {
   e.preventDefault();
-}
+  const {id, title, link} = getDOMArticle(e);
+  // console.log(getDOMArticle(e));
+  
+  // Ajax call to the API - Delete Article
+  $.ajax(
+    {
+      url: `/api/delete_article/${id}`,
+      method: "POST",
+      data: {id:id}
+    }
+  )
+    .then(response => {
+      // console.log(response);
+      drawAndShowModal("Article Saved", title);
+      setTimeout(() => location.reload(), defaultTimeOut);
+    })
+    .catch(error => {
+      // console.log(error);
+      drawAndShowModal("An Error Happen", "Status Code: " + JSON.stringify(error.status));
+    });  
 
-// prepareNoteForm Handler
-const prepareNoteForm = (e) => {
+};
+
+// viewNotes Handler
+const viewNotes = (e) => {
   e.preventDefault();
+  $("#notesModal").modal("show");
 }
 
 // addNote Handler
@@ -72,9 +136,18 @@ const deleteNote = (e) => {
 }
 
 document.getElementById("articleList").addEventListener("click", e => {
-  if(e.target && e.target.classList.contains("articleDiv")){
+  if(e.target && e.target.classList.contains("article-div")){
     // console.log(e.target);
-    console.log(e.target.id);
+    // console.log(e.target.id);
     // scrapButtonHandler(e);
+  }
+  else if(e.target && e.target.classList.contains("save-article")){
+    saveArticle(e);
+  }
+  else if(e.target && e.target.classList.contains("delete-article")){
+    deleteArticleFromSaved(e);
+  }
+  else if(e.target && e.target.classList.contains("view-notes")){
+    viewNotes(e);
   }
 });

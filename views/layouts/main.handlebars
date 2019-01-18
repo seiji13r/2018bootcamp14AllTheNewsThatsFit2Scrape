@@ -21,14 +21,48 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarMenu">
-            <ul class="navbar-nav ml-auto">
-              {{!--
+            <ul class="navbar-nav mr-auto">
               <li class="nav-item">
-                <a href="#link1" class="nav-link">Link 1</a>
+                <a class="btn btn-outline-primary text-light my-2 my-sm-0" href="/scraped-articles">
+                  Scraped Articles
+                </a>
+                <a class="btn btn-outline-info text-light my-2 my-sm-0" href="/saved-articles">
+                  Saved Articles
+                </a>
+              </li>
+{{!-- 
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                  View Articles
+                </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/scraped-articles" class="nav-link">Scraped Articles</a>
+                  <a class="dropdown-item" href="/saved-articles" class="nav-link">Saved Articles</a>
+                </div>
               </li>
                --}}
+            </ul>
+            <ul class="navbar-nav ml-auto">
+              {{!--                
+               <li class="nav-item">
+                <a href="/scraped-articles" class="nav-link">Scraped Articles</a>
+              </li>
+                --}}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                  API Actions
+                </a>
+                <div class="dropdown-menu">
+                  <a class="dropdown-item" href="/api/articles/all">GET All Articles</a>
+                  <a class="dropdown-item" href="/api/articles/scraped">GET Scraped Articles</a>
+                  <a class="dropdown-item" href="/api/articles/saved">GET Saved Articles</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="/api/articles/remove-scraped">REMOVE Scraped Articles</a>
+                  <a class="dropdown-item" href="/api/articles/remove-all">REMOVE All Articles</a>
+                </div>
+              </li>
               <li class="nav-item">
-                <button id="scrapingBtn" class="btn btn-outline-success my-2 my-sm-0" type="submit">Scrap</button>
+                <button id="scrapingBtn" class="btn btn-outline-success my-2 my-sm-0" type="submit">Scrape Articles</button>
               </li>
             </ul>
           </div>
@@ -48,6 +82,27 @@
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-dismiss="modal">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!--Notes Modal-->
+      <div class="modal fade" id="notesModal">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2 class="modal-title"> Modal Title</h2>
+              <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+            </div>
+            <div class="modal-body">
+              <p>Modal Body</p>
+              <div>
+                <input type="text" name="note">
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 
-<div class="jumbotron">
-  <h1>HERE we are in the Index!</h1>
+<div class="jumbotron bg-dark text-light mt-3">
+  <h1 class="text-center">HERE we are in the Index!</h1>
 </div>
 
 <div class="container-fluid">
@@ -8,9 +8,19 @@
     <row class="col-12" id="articleList">
       <ul>
         {{#each articles}}
-        <li class="articleDiv" id="{{this.id}}">
-          {{this.title}}
-        </li>
+        <div class="d-flex justify-content-between article-div my-3 py-2 bg-light" id="{{this.id}}">
+          <a class="" href="{{this.link}}" target="_blank">
+            {{this.title}}  
+          </a>
+          <div class="buttons">
+          {{#if this.saved}}
+            <button class="btn btn-info view-notes">Add Note</button>
+            <button class="btn btn-danger delete-article">Delete Article</button>
+          {{else}}
+            <button class="btn btn-success save-article">Save Article</button>
+          {{/if}}
+          </div>
+        </div>
         {{/each}}
       </ul>
     </row>
