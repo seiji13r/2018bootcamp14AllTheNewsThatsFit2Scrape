@@ -1,4 +1,4 @@
-const homeUrl = "/scraped-articles";
+const homeUrl = "/";
 const defaultTimeOut = 2000;
 // This Function Take the information From the Article in the DOM
 const getDOMArticle = (e) => {

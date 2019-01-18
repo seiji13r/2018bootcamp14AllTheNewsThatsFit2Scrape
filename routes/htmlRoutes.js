@@ -1,6 +1,6 @@
 module.exports = (app, db) => {
 
-  app.get(["/scraped", "/scraped-articles"], (req, res) => {
+  app.get(["/", "/scraped-articles"], (req, res) => {
     db.Article.find({saved:false})
       .then((dbArticle) => {
         // eslint-disable-next-line no-console
