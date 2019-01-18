@@ -1,5 +1,6 @@
 const homeUrl = "/scraped-articles";
 const defaultTimeOut = 2000;
+// This Function Take the information From the Article in the DOM
 const getDOMArticle = (e) => {
   const articleContainer = e.target.parentElement.parentElement;
   const articleLink = articleContainer.children[0];
@@ -22,11 +23,54 @@ const drawAndShowModal = (title, message) => {
   $("#messageModal").modal("show");
 };
 
+const drawAndShowNotesModal = (title, message, article) => {
+  // Draw the response Message in the Modal
+  $("#notesModal .modal-title").text(article.title);
+  $("#notesModal .modal-body > p").text(article.link);
+  // Draw the article Notes
+  article.notes.forEach( note => {
+    // console.log(note.body);
+    const noteDiv = $("<div>")
+      .addClass("note-div d-flex justify-content-between my-2")
+      .attr("data-articleid", article._id)
+      .attr("id",`div-note-${note._id}`);
+    const delNoteBtn = $("<button>")
+      .addClass("btn btn-sm btn-danger delete-note")
+      .html("&times;")
+      .attr("data-articleid", article._id)
+      .attr("id",`btn-del-note-${note._id}`);
+    noteDiv.text(note.body);
+    noteDiv.append(delNoteBtn);
+    $("#notesModal .modal-body .notes").append(noteDiv);
+  });
+
+  // Add Submit Button
+  const submitNoteBtn = $("<button>")
+    .addClass("btn btn-primary btn-add-note")
+    .attr("data-articleid", article._id)
+    .text("Submit");
+  $("#notesModal .modal-footer").append(submitNoteBtn);
+
+  // Show the Modal
+  $("#notesModal").modal("show");
+};
+
 // Clear modal dismiss 
 $('#messageModal').on('hidden.bs.modal', function (e) {
   $("#messageModal .modal-body > p").text("");
   $("#messageModal .modal-title").text("");
-})
+  location.reload();
+});
+
+// Clear modal dismiss 
+$('#notesModal').on('hidden.bs.modal', function (e) {
+  $("#notesModal .modal-body > p").text("");
+  $("#notesModal .modal-body .notes").empty();
+  $("#notesModal .modal-title").text("");
+  $("#notesModal .modal-footer").empty();
+  $("#noteInput").val("");
+  location.reload();
+});
 
 // Scrap Button Handler
 const scrapButtonHandler = (e) => {
@@ -122,18 +166,24 @@ const deleteArticleFromSaved = (e) => {
 // viewNotes Handler
 const viewNotes = (e) => {
   e.preventDefault();
-  $("#notesModal").modal("show");
-}
-
-// addNote Handler
-const addNote = (e) => {
-  e.preventDefault();
-}
-
-// deleteNote Handler
-const deleteNote = (e) => {
-  e.preventDefault();
-}
+  // Get the Information of the Article
+  const {id, title, link} = getDOMArticle(e);
+  // console.log(`/api/article/${id}`);
+  // Get the Notes From the Article
+  $.ajax(
+    {
+      url: `/api/article/${id}`,
+      method: "GET"
+    }
+  )
+    .then(response => {
+      drawAndShowNotesModal(id, title, response);
+    })
+    .catch(error => {
+      // console.log(error);
+      drawAndShowModal("An Error Happen", "Status Code: " + JSON.stringify(error.status));
+    });  
+};
 
 document.getElementById("articleList").addEventListener("click", e => {
   if(e.target && e.target.classList.contains("article-div")){
@@ -149,5 +199,73 @@ document.getElementById("articleList").addEventListener("click", e => {
   }
   else if(e.target && e.target.classList.contains("view-notes")){
     viewNotes(e);
+  }
+});
+
+// addNote Handler
+const addNote = (e) => {
+  e.preventDefault();
+  const articleId = e.target.dataset.articleid;
+  const noteInput = document.getElementById("noteInput");
+  const title = "";
+  const body = noteInput.value
+
+  $.ajax({
+    url: `/article-add-note/${articleId}`,
+    method: "POST",
+    data: {
+      title,
+      body
+    }
+  })
+    .then(response => {
+      // console.log("Response:", response)
+      const lastNote = response.notes.reverse()[0];
+      const noteDiv = $("<div>")
+        .addClass("note-div d-flex justify-content-between my-2")
+        .attr("data-articleid", articleId)
+        .attr("id",`div-note-${lastNote}`);
+      const delNoteBtn = $("<button>")
+        .addClass("btn btn-sm btn-danger delete-note")
+        .html("&times;")
+        .attr("data-articleid", articleId)
+        .attr("id",`btn-del-note-${lastNote}`);
+      noteDiv.text(body);
+      noteDiv.append(delNoteBtn);
+      $("#notesModal .modal-body .notes").append(noteDiv);
+      $("#noteInput").val("");
+    })
+    .catch(error => console.log("Error:", error));
+};
+
+// deleteNote Handler
+const deleteNote = (e) => {
+  e.preventDefault();
+  // IDs are generated in drawAndShowNotesModal() in this File.
+  const btnId = e.target.id;
+  const articleId = e.target.dataset.articleid;
+  const noteId = btnId.replace("btn-del-note-", "");
+  const noteDiv = document.getElementById(`div-note-${noteId}`);
+  // Remove the Note From the Modal
+  noteDiv.remove();
+  // Remove the Note From the Database by Calling the API.
+  $.ajax({
+    url: "/article-remove-note",
+    method: "POST",
+    data: {
+      articleId,
+      noteId
+    }
+  })
+    .then(result => /*console.log(result)*/ result)
+    .catch(err => console.log(err));
+};
+
+document.getElementById("notesModal").addEventListener("click", e => {
+  if(e.target && e.target.classList.contains("delete-note")){
+    deleteNote(e);
+  }
+  else if(e.target && e.target.classList.contains("btn-add-note")){
+    addNote(e);
   }
 });

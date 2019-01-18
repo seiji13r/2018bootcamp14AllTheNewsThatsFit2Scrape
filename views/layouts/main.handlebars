@@ -74,7 +74,7 @@
         <div class="modal-dialog">
           <div class="modal-content">
             <div class="modal-header">
-              <h2 class="modal-title"> Modal Title</h2>
+              <h2 class="modal-title text-center"> Modal Title</h2>
               <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <div class="modal-body">
@@ -89,20 +89,26 @@
 
       <!--Notes Modal-->
       <div class="modal fade" id="notesModal">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-lg">
           <div class="modal-content">
             <div class="modal-header">
-              <h2 class="modal-title"> Modal Title</h2>
+              <h2 class="modal-title text-center"> Modal Title</h2>
               <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
             </div>
             <div class="modal-body">
               <p>Modal Body</p>
-              <div>
-                <input type="text" name="note">
+              <div class="row">
+                <div class="col-8 offset-2 notes" id="divNotes">
+
+                </div>
+              </div>
+              <div class="form-group col-10 offset-1">
+                <label for="noteInput">Note</label>
+                <textarea class="form-control" id="noteInput" name="note" rows="3"></textarea>
               </div>
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button>
+              {{!-- <button type="button" class="btn btn-primary" data-dismiss="modal">Submit</button> --}}
             </div>
           </div>
         </div>
