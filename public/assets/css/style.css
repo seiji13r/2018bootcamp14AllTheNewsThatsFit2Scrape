@@ -1,3 +1,42 @@
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css?family=Coiny|Oswald|Playfair+Display|ZCOOL+KuaiLe|ZCOOL+QingKe+HuangYou');
+/* 
+font-family: 'Coiny', cursive;
+font-family: 'ZCOOL QingKe HuangYou', cursive;
+font-family: 'Oswald', sans-serif;
+font-family: 'ZCOOL KuaiLe', cursive;
+font-family: 'Playfair Display', serif;
+*/
+
+/* ************************************************ */
+/* ************************************************ */
+/* Navbar Styles */
+.navbar-brand{
+    font-family: 'ZCOOL KuaiLe', cursive;
+}
+/* ************************************************ */
+/* ************************************************ */
+/* Heading Style */
+.heading {
+    background-image: url("../img/header.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+.heading h1 {
+    background-color: rgba(0,0,0,0.6);
+    font-family: 'ZCOOL KuaiLe', cursive;
+    color: white;
+    border-radius: 5px;
+}
+
+/* Article List */
+.article-image {
+    /* width: 100%; */
+    object-fit: contain
+}
+
 /* .modal-content {
     overflow: hidden;
     white-space: nowrap;

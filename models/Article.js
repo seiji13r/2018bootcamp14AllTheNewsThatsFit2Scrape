@@ -16,7 +16,17 @@ var ArticleSchema = new Schema({
     type: String,
     required: true
   },
-  // `link` is required and of type String
+  // `image` is required and of type String
+  image: {
+    type: String,
+    required: true
+  },
+  // `brief` is required and of type String
+  brief: {
+    type: String,
+    required: true
+  },
+  // `saved` is required and of type Boolean
   saved: {
     type: Boolean,
     default: false,

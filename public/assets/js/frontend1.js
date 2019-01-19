@@ -26,7 +26,7 @@ const drawAndShowModal = (title, message) => {
 const drawAndShowNotesModal = (title, message, article) => {
   // Draw the response Message in the Modal
   $("#notesModal .modal-title").text(article.title);
-  $("#notesModal .modal-body > p").text(article.link);
+  $("#notesModal .modal-body > p").text(article.brief);
   // Draw the article Notes
   article.notes.forEach( note => {
     // console.log(note.body);

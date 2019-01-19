@@ -1,18 +1,37 @@
 
-<div class="jumbotron bg-dark text-light mt-3">
-  <h1 class="text-center">HERE we are in the Index!</h1>
+<div class="container mt-3">
+  <div class="heading jumbotron">
+    <h1 class="text-center">
+      <span>
+        Check the Latest Software Development News! 👀
+      </span>
+    </h1>
+  </div>
 </div>
 
 <div class="container-fluid">
   <div class="row">
     <row class="col-12" id="articleList">
-      <ul>
         {{#each articles}}
-        <div class="d-flex justify-content-between article-div my-3 py-2 bg-light" id="{{this.id}}">
-          <a class="" href="{{this.link}}" target="_blank">
-            {{this.title}}  
-          </a>
-          <div class="buttons">
+        <div class="row d-flex justify-content-between article-div my-3 py-2 bg-light" id="{{this.id}}">
+          <div class="col-md-7">
+            <div class="row">
+
+              {{!-- Article Image --}}
+              <div class="col-md-4">
+                <img src="{{this.image}}" alt="Article Image" class="article-image">
+              </div>
+              {{!-- Article Text --}}
+              <div class="col-md-8">
+                <a class="" href="{{this.link}}" target="_blank">
+                  <h4>{{this.title}}</h4>
+                </a>
+                <p class="article-brief">{{this.brief}}</p>
+              </div>
+
+            </div>
+          </div>
+          <div class="col-md-4 buttons">
           {{#if this.saved}}
             <button class="btn btn-info view-notes">Add Note</button>
             <button class="btn btn-danger delete-article">Delete Article</button>
@@ -22,7 +41,7 @@
           </div>
         </div>
         {{/each}}
-      </ul>
+
     </row>
   </div>
 </div>

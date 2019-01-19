@@ -6,8 +6,11 @@ const cheerio = require("cheerio");
 
 module.exports = (app, db) => {
   
-  app.get("/api/scrape", (req, res) => {
+  app.get("/api/scrape2", (req, res) => {
     // First, we grab the body of the html with axios
+    // https://sdtimes.com/category/latest-news/page/2/
+    // https://sdtimes.com/category/latest-news/
+    // "http://www.echojs.com/"
     axios.get("http://www.echojs.com/")
       .then(response => {
         // Then, we load that into cheerio and save it to $ for a shorthand selector
@@ -27,6 +30,68 @@ module.exports = (app, db) => {
             .children("a")
             .attr("href");
     
+          // Custom Implementation of Find or Create
+          // This will prevent to duplicate Articles
+          db.Article.findOne({title:result.title})
+            .then(article => {
+              // console.log(article);
+              if(!article){
+                // console.log(result.title, "Not Found");
+                // Create a new Article using the `result` object built from scraping
+                db.Article.create(result)
+                  .then(dbArticle => {
+                    // View the added result in the console
+                    // eslint-disable-next-line no-console
+                    // console.log(dbArticle);
+                    dbArticle;
+                  })
+                  .catch(function(err) {
+                    // If an error occurred, log it
+                    // eslint-disable-next-line no-console
+                    console.log(err);
+                  });
+              }
+            })
+            .catch(error => res.json({"error": error}));
+        });
+    
+        // Send a message to the client
+        // res.send("Scrape Complete");
+        res.json({"msg": "Scrape Complete"});
+      })
+      .catch(axiosError => {
+        res.json({"error": axiosError.message});
+      });
+  });
+
+  app.get("/api/scrape", (req, res) => {
+    // First, we grab the body of the html with axios
+    // https://sdtimes.com/category/latest-news/page/2/
+    // https://sdtimes.com/category/latest-news/
+    // "http://www.echojs.com/"
+    axios.get("https://sdtimes.com/category/latest-news/")
+      .then(response => {
+        // Then, we load that into cheerio and save it to $ for a shorthand selector
+        const $ = cheerio.load(response.data);
+    
+        // Now, we grab every h2 within an article tag, and do the following:
+        // $("article h2").each(function(i, element) {
+        $(".latestnewslist").each(function() {
+          // Save an empty result object
+          const result = {};
+    
+          // Add the text and href of every link, and save them as properties of the result object
+          result.image = $(this).children(".thm").children("a").children("img").attr("src");
+          result.title = $(this).children(".btmborder").children("h4").children("a").text();
+          result.link = $(this).children(".btmborder").children("h4").children("a").attr("href");
+          result.brief = $(this).children(".btmborder").children("p").text().replace("… continue reading", "...");
+    
+          // console.log("img src:", $(this).children(".thm").children("a").children("img").attr("src"));
+          // console.log("title:", $(this).children(".btmborder").children("h4").children("a").text());
+          // console.log("link:", $(this).children(".btmborder").children("h4").children("a").attr("href"));
+          // console.log("brief:", $(this).children(".btmborder").children("p").text().replace("… continue reading", "..."));
+          // console.log("");
+          
           // Custom Implementation of Find or Create
           // This will prevent to duplicate Articles
           db.Article.findOne({title:result.title})
